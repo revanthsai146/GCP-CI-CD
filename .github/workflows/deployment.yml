@@ -1,0 +1,42 @@
+name: Build and Deploy HelloWorld Jar
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Compile Java file
+      run: |
+        javac --release 17 Hello.java
+        jar cfe HelloWorld.jar Hello Hello.class
+
+    - name: Upload JAR to GCP VM
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USER }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        source: "HelloWorld.jar"
+        target: "~/"
+
+    - name: Run HelloWorld JAR on VM
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.GCP_VM_HOST }}
+        username: ${{ secrets.GCP_VM_USER }}
+        key: ${{ secrets.GCP_VM_SSH_KEY }}
+        script: |
+          java -jar HelloWorld.jar
