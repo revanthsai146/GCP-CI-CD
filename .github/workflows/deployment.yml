@@ -38,6 +38,5 @@ jobs:
         host: ${{ secrets.GCP_VM_HOST }}
         username: ${{ secrets.GCP_VM_USER }}
         key: ${{ secrets.GCP_VM_SSH_KEY }}
-        script: |
+        script: 
           java -jar HelloWorld.jar
-          
