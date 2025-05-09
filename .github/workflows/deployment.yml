@@ -40,3 +40,4 @@ jobs:
         key: ${{ secrets.GCP_VM_SSH_KEY }}
         script: |
           java -jar HelloWorld.jar
+          
